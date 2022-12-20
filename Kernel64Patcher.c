@@ -553,6 +553,41 @@ int force_developer_mode(void* kernel_buf,size_t kernel_len) {
     return 0;
 }
 
+int troll(void* kernel_buf,size_t kernel_len) {
+    char guard_exc_string[sizeof("guard_exc_info %llx %llx @%s:%d")] = "guard_exc_info %llx %llx @%s:%d";
+    
+    unsigned char *guard_exc_loc = memmem(kernel_buf, kernel_len, guard_exc_string, sizeof("guard_exc_info %llx %llx @%s:%d") - 1);
+    
+    if(!guard_exc_loc) {
+        printf("%s: Could not find \"guard_exc_info %llx %llx @%s:%d\"\n",__FUNCTION__);
+        return -1;
+    }
+    
+    printf("%s: Found \"guard_exc_info %llx %llx @%s:%d\" str loc at %p\n",__FUNCTION__, (void*) GET_OFFSET(kernel_len, guard_exc_loc));
+    
+    addr_t guard_exc_ref = xref64(kernel_buf,0,kernel_len,(addr_t)GET_OFFSET(kernel_len, guard_exc_loc));
+    
+    if(!guard_exc_ref) {
+        printf("%s: Could not find \"guard_exc_info %llx %llx @%s:%d\" xref\n",__FUNCTION__);
+        return -1;
+    }
+    
+    printf("%s: Found \"guard_exc_info %llx %llx @%s:%d\" xref at %p\n",__FUNCTION__, (void*) guard_exc_ref);
+    
+    #define INSN_LSR 0x28, 0xff
+    
+    addr_t lsr = step64_back(kernel_buf, guard_exc_ref, 100, INSN_LSR);
+    
+    if(!lsr) {
+        printf("%s: Could not find lsr\n",__FUNCTION__);
+        return -1;
+    }
+    
+    printf("%s: Patching guards at %p\n",__FUNCTION__,(void*)lsr);
+
+    return 0;
+}
+
 int main(int argc, char **argv) {
     
     printf("%s: Starting...\n", __FUNCTION__);
