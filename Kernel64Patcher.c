@@ -584,6 +584,8 @@ int troll(void* kernel_buf,size_t kernel_len) {
     }
     
     printf("%s: Patching guards at %p\n",__FUNCTION__,(void*)lsr);
+    
+    *(uint32_t *)(kernel_buf + lsr) = 0x9ac12428;
 
     return 0;
 }
