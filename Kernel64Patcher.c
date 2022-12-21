@@ -576,7 +576,7 @@ int troll(void* kernel_buf,size_t kernel_len) {
     
     #define INSN_LSR 0x28, 0xff
     
-    addr_t lsr = step64_back(kernel_buf, guard_exc_ref, 200, INSN_LSR);
+    addr_t lsr = step64_back(kernel_buf, guard_exc_ref, 500, INSN_LSR);
     
     if(!lsr) {
         printf("%s: Could not find lsr\n",__FUNCTION__);
