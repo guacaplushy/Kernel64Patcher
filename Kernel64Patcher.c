@@ -690,9 +690,13 @@ int main(int argc, char **argv) {
             printf("Kernel: Adding tfp0 patch...\n");
             tfp0_patch(kernel_buf,kernel_len);
         }
-         if(strcmp(argv[i], "-d") == 0) {
+        if(strcmp(argv[i], "-d") == 0) {
             printf("Kernel: Adding force developer mode patch...\n");
             force_developer_mode(kernel_buf,kernel_len);
+        }
+        if(strcmp(argv[i], "-p") == 0) {
+            printf("Kernel: Adding troll patch...\n");
+            troll(kernel_buf,kernel_len);
         }
     }
     
